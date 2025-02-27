@@ -8,7 +8,7 @@ class ErrorHandler {
       try {
         await next();
       } catch (error) {
-        logger.error(error);
+        logger.error('catch error->',error);
         ctx.body = "500请求，服务器内部错误";
       }
     });

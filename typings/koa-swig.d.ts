@@ -1,6 +1,6 @@
 // Type definitions for swig-templates and koa-swig
 
-declare module "swig-templates" {
+declare module 'swig-templates' {
   interface SwigOptions {
     /**
      * Whether to autoescape template variables
@@ -12,7 +12,7 @@ declare module "swig-templates" {
      * Cache control, 'memory' or false
      * @default 'memory'
      */
-    cache?: "memory" | false;
+    cache?: 'memory' | false;
 
     /**
      * Template variables that are always available
@@ -75,8 +75,8 @@ declare module "swig-templates" {
   export = swig;
 }
 
-declare module "koa-swig" {
-  import { Context } from "koa";
+declare module 'koa-swig' {
+  import { Context } from 'koa';
 
   interface KoaSwigOptions {
     /**
@@ -89,7 +89,7 @@ declare module "koa-swig" {
      * Cache control, 'memory' or false
      * @default 'memory'
      */
-    cache?: "memory" | false;
+    cache?: 'memory' | false;
 
     /**
      * Default extension for your views

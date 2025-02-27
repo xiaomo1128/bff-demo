@@ -1,4 +1,4 @@
-import { extend } from "lodash";
+import { assignIn } from "lodash";
 import { join } from "path";
 
 // 配置项
@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === "development") {
   let localConfig = {
     port: 7878,
   };
-  config = extend(config, localConfig);
+  config = assignIn(config, localConfig);
 }
 // 生产环境
 if (process.env.NODE_ENV === "production") {
@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === "production") {
     port: 7979,
     memoryFlag: "memory",
   };
-  config = extend(config, prodConfig);
+  config = assignIn(config, prodConfig);
 }
 
 export default config;
