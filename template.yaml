@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: '2010-09-09'  # AWS CloudFormation template version
+Transform: AWS::Serverless-2016-10-31  # Enables SAM (Serverless Application Model) transformations
+
+# Global settings applied to all resources unless overridden
+Globals:
+  Function:  # Default settings for all Lambda functions
+    Timeout: 30  # Maximum execution time in seconds
+    MemorySize: 1024  # Memory allocation in MB
+    Runtime: nodejs20.x  # Node.js version 20
+    Architectures: ['arm64']  # Using ARM architecture for better performance and cost
+    Environment:
+      Variables:
+        NODE_OPTIONS: '--enable-source-maps'  # Enable source maps for better debugging
+    EphemeralStorage:
+      Size: 512  # Temporary storage allocation in MB for Lambda functions
+  Api:  # Default settings for API Gateway
+    OpenApiVersion: '2.0'  # OpenAPI/Swagger specification version
+    Cors:  # Cross-Origin Resource Sharing settings
+      AllowMethods: "'*'"  # Allow all HTTP methods
+      AllowHeaders: "'Content-Type,Authorization'"  # Allowed HTTP headers
+      AllowOrigin: "'*'"  # Allow requests from any origin
+      MaxAge: 600  # Cache CORS preflight results for 600 seconds
+
+Resources:
+  NodeModulesLayer:  # Lambda Layer for Node.js dependencies
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: nest-dependencies  # Name of the layer
+      Description: Node modules for Nest.js application  # Description of the layer's purpose
+      ContentUri: layer/  # Location of layer code in the project
+      CompatibleRuntimes:
+        - nodejs20.x  # Which runtimes can use this layer
+      RetentionPolicy: Retain  # Keep versions when updating
+
+  Api:  # API Gateway definition
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev  # Development stage
+      BinaryMediaTypes:  # Media types to handle as binary
+        - 'image/*'  # All image types
+        - 'multipart/form-data'  # Form data with files
+      Auth:
+        DefaultAuthorizer: NONE  # No default authorization
+
+  NestjsFunction:  # Main Lambda function running the Nest.js application
+    Type: AWS::Serverless::Function
+    Metadata:
+      SkipBuild: true  # Skip SAM's default build process (using custom build)
+    Properties:
+      Handler: lambda.handler  # Entry point to the application
+      CodeUri: ./dist  # Location of compiled code
+      MemorySize: 3008  # Higher memory allocation for Nest.js (also increases CPU)
+      Timeout: 30  # Maximum execution time in seconds
+      Layers:
+        - !Ref NodeModulesLayer  # Reference to the NodeModulesLayer defined above
+      Policies:  # IAM Policies for the Lambda function
+        - S3CrudPolicy:  # Grants access to the S3 bucket
+            BucketName: aladdinagi-assets
+        - VPCAccessPolicy: {}  # Grants access to VPC resources
+      Events:
+        ApiEvent:  # Event source that triggers the Lambda
+          Type: Api  # API Gateway event type
+          Properties:
+            Path: /{proxy+}  # Catch-all path pattern to route all requests
+            Method: ANY  # Accept all HTTP methods
+            RestApiId: !Ref Api  # Reference to the API defined above
+            Auth:
+              Authorizer: NONE  # No authorization for this path
+      AutoPublishAlias: live  # Automatically publish to the 'live' alias when updated
+
+Outputs:  # Values exported from the stack
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${Api}.execute-api.${AWS::Region}.amazonaws.com/dev'  # Constructs the API URL
+  FunctionArn:
+    Description: Lambda Function ARN
+    Value: !GetAtt NestjsFunction.Arn  # Gets the ARN (Amazon Resource Name) of the Lambda function
