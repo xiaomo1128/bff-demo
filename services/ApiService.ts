@@ -10,6 +10,14 @@ class ApiService implements IApi {
       });
     });
   }
+  getTest() {
+    return new Promise<IData>((resolve) => {
+      resolve({
+        item: "Test Api",
+        result: [2, "Test~~"],
+      });
+    });
+  }
 }
 
 export default ApiService;

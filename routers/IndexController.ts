@@ -6,7 +6,7 @@ class IndexController {
   @GET()
   async actionList(ctx: Context): Promise<void> {
     const data = await ctx.render("index", {
-      data: "服务端数据",
+      data: `服务端数据接口：/ \n /test \n /list`,
     });
     console.log("data->", data);
 

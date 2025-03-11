@@ -6,3 +6,5 @@ s3_prefix = "bff-demo"
 region = "us-east-1"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
+confirm_changeset = true
+disable_rollback = true

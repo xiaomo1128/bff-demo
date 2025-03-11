@@ -8,8 +8,11 @@ class ErrorHandler {
       try {
         await next();
       } catch (error) {
-        logger.error('catch error->',error);
-        ctx.body = "500请求，服务器内部错误";
+        console.error("Server Error:", error);
+        ctx.status = error.status || 500;
+        ctx.body = {
+          message: error.message || "500请求，服务器内部错误",
+        };
       }
     });
 
