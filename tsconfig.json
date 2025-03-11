@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2024",
+    "target": "ES2022",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "typeRoots": ["typings"],
     "baseUrl": "./",
