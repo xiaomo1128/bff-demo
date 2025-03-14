@@ -62,7 +62,7 @@ app.use(scopePerRequest(container)); // 每次请求 都会从容器中获取注
 
 ErrorHandler.error(app, logger); // 错误处理 必须放在路由前面
 
-// app.use(historyApiFallback({ index: "/", whiteList: ["/api"] })); // 路由重定向到index.html
+app.use(historyApiFallback({ index: "/", whiteList: ["/api"] })); // 路由重定向到index.html
 
 app.use(loadControllers(__dirname + "/routers/*.ts")); // 加载路由 所有路由生效，必须放在最后，否则前面的中间件会被覆盖，导致失效，路由不生效，404，500等错误
 

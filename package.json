@@ -38,6 +38,7 @@
     "@types/lodash": "^4.17.15",
     "@types/module-alias": "^2.0.4",
     "@types/node": "^22.13.5",
+    "copy-webpack-plugin": "^13.0.0",
     "glob": "^11.0.1",
     "rollup": "^4.35.0",
     "rollup-plugin-terser": "^7.0.2",

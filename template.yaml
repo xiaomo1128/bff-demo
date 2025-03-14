@@ -63,7 +63,13 @@ Resources:
             BucketName: aladdinagi-assets
         - VPCAccessPolicy: {}  # Grants access to VPC resources
       Events:
-        ApiEvent:  # Event source that triggers the Lambda
+        ApiRootEvent:  # 专门处理根路径
+          Type: Api  # API Gateway event type
+          Properties:
+            Path: /  # Root path
+            Method: ANY  # Accept all HTTP methods
+            RestApiId: !Ref Api  # Reference to the API defined above
+        ApiEvent:  # 处理其他所有路径
           Type: Api  # API Gateway event type
           Properties:
             Path: /{proxy+}  # Catch-all path pattern to route all requests
