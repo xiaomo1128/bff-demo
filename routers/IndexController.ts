@@ -8,8 +8,6 @@ class IndexController {
     const data = await ctx.render("index", {
       data: `服务端数据接口：/ \n /test \n /list`,
     });
-    console.log("data->", data);
-
     ctx.body = data;
   }
 }

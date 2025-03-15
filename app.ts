@@ -26,7 +26,7 @@ configure({
       filename:
         process.env.NODE_ENV === "development"
           ? `${__dirname}/logs/demo.log`
-          : "/tmp/application.log",
+          : "/tmp/yd.log",
     },
   },
   categories: { default: { appenders: ["cheese"], level: "error" } },
@@ -35,6 +35,7 @@ configure({
 const { port, viewDir, memoryFlag, staticDir } = config; // 静态资源文件、配置项
 const app = new Koa(); // 创建koa实例
 const logger = getLogger("cheese"); // 日志实例
+const fileExt = process.env.NODE_ENV === "development" ? ".ts" : ".js";
 
 // 实现 IndexController.ts 中的 ctx.render 方法，由控制器触发渲染，将服务层提供的数据传入模板
 app.context.render = co.wrap(
@@ -51,7 +52,7 @@ app.use(serve(staticDir)); // 静态资源文件
 //创建IOC容器
 const container = createContainer();
 //所有可被注入的服务，都在container中，被路由控制器通过依赖注入使用
-container.loadModules([__dirname + "/services/*.ts"], {
+container.loadModules([`${__dirname}/services/*${fileExt}`], {
   formatName: "camelCase",
   resolverOptions: {
     lifetime: Lifetime.SCOPED,
@@ -62,9 +63,11 @@ app.use(scopePerRequest(container)); // 每次请求 都会从容器中获取注
 
 ErrorHandler.error(app, logger); // 错误处理 必须放在路由前面
 
-app.use(historyApiFallback({ index: "/", whiteList: ["/api"] })); // 路由重定向到index.html
+// 路由重定向到index.html
+app.use(historyApiFallback({ index: "/", whiteList: ["/api"] }));
 
-app.use(loadControllers(__dirname + "/routers/*.ts")); // 加载路由 所有路由生效，必须放在最后，否则前面的中间件会被覆盖，导致失效，路由不生效，404，500等错误
+// 加载路由 所有路由生效，必须放在最后，否则前面的中间件会被覆盖，导致失效，路由不生效，404，500等错误
+app.use(loadControllers(`${__dirname}/routers/*${fileExt}`));
 
 if (process.env.NODE_ENV === "development") {
   app.listen(port, () => {

@@ -2,7 +2,7 @@ import { IApi } from "@interfaces/IApi";
 import { GET, route } from "awilix-koa";
 import Router from "koa-router";
 
-route("/");
+@route("/api")
 class ApiController {
   private apiService: IApi;
   constructor({ apiService }: { apiService: IApi }) {

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only app.ts",
     "node:dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only app.ts",
-    "deploy": "bash ./deploy.sh",
+    "deploy": "bash ./deploy.sh production",
     "build:rollup": "rollup -c --bundleConfigAsCjs --environment NODE_ENV:production",
     "build:webpack": "webpack --mode production"
   },
@@ -41,6 +41,7 @@
     "copy-webpack-plugin": "^13.0.0",
     "glob": "^11.0.1",
     "rollup": "^4.35.0",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-loader": "^9.5.2",

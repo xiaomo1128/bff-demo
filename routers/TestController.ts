@@ -2,8 +2,8 @@ import { IApi } from "@interfaces/IApi";
 import { GET, route } from "awilix-koa";
 import Router from "koa-router";
 
-route("/");
-class ApiController {
+@route("/api")
+class TestController {
   private apiService: IApi;
   constructor({ apiService }: { apiService: IApi }) {
     this.apiService = apiService;
@@ -21,4 +21,4 @@ class ApiController {
   }
 }
 
-export default ApiController;
+export default TestController;

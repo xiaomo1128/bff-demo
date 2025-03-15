@@ -5,6 +5,7 @@ const alias = require("@rollup/plugin-alias");
 const path = require("path");
 const typescript = require("@rollup/plugin-typescript");
 const glob = require("glob");
+const copy = require("rollup-plugin-copy");
 
 const projectRootDir = path.resolve(__dirname);
 
@@ -17,7 +18,7 @@ const getAllTsFiles = () => {
   // 只获取项目源码文件，严格排除 node_modules
   const tsFiles = glob.sync("**/*.ts", {
     ignore: [
-      "**/node_modules/**",  // 确保排除所有 node_modules 目录
+      "**/node_modules/**", // 确保排除所有 node_modules 目录
       "dist/**",
       "**/*.d.ts",
       "**/*.spec.ts",
@@ -25,17 +26,17 @@ const getAllTsFiles = () => {
       "**/*.test-d.ts",
     ],
   });
-  
+
   console.log("将要编译的文件:", tsFiles);
-  
+
   // 创建一个对象，每个文件作为一个入口点
   const entries = {};
-  tsFiles.forEach(file => {
+  tsFiles.forEach((file) => {
     // 移除 .ts 扩展名作为入口名
-    const entryName = file.replace(/\.ts$/, '');
+    const entryName = file.replace(/\.ts$/, "");
     entries[entryName] = file;
   });
-  
+
   return entries;
 };
 
@@ -74,9 +75,21 @@ const pluginsConfig = [
     noCheck: skipTypes, // 根据环境变量决定是否跳过类型检查
     compilerOptions: {
       declaration: false, // 禁止生成.d.ts文件
-    }
+    },
   }),
   terser(),
+  // 文件复制插件
+  // 对应webpack中的CopyWebpackPlugin
+  // 用于复制静态资源文件
+  copy({
+    targets: [
+      {
+        src: "views/**/*.html", // 复制views目录下的所有html文件
+        dest: "dist/views", // 输出到dist/views目录
+      },
+    ],
+    verbose: true, // 显示详细日志
+  }),
 ];
 
 const outputConfig = {
@@ -99,7 +112,7 @@ const externalDependencies = [
   "serverless-http",
   "module-alias",
   "koa2-connect-history-api-fallback",
-  /node_modules/ // 排除所有 node_modules 中的模块
+  /node_modules/, // 排除所有 node_modules 中的模块
 ];
 
 // 构建配置
@@ -107,5 +120,5 @@ module.exports = {
   input: getAllTsFiles(),
   output: outputConfig,
   external: externalDependencies,
-  plugins: pluginsConfig
+  plugins: pluginsConfig,
 };
